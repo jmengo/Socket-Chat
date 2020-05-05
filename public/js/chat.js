@@ -1,9 +1,11 @@
 const socket = io()
 
-socket.on('countUpdated', (count) => {
-  console.log(`Count incremented to ${count}`)
+socket.on('sendMessage', (msg) => {
+  console.log(msg)
 })
 
-document.getElementById('increment').addEventListener('click', () => {
-  socket.emit('increment')
+document.getElementById('messageForm').addEventListener('submit', (e) => {
+  e.preventDefault()
+  text = e.target.elements.message.value
+  socket.emit('sendMessage', text)
 })

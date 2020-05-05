@@ -12,14 +12,17 @@ const port = 3000
 app.use(express.json())
 app.use(express.static('public'))
 
-let count = 0
-
 io.on('connection', (socket) => {
-  console.log('new socket connection')
-  socket.emit('countUpdated', count)
-  socket.on('increment', () => {
-    count++
-    socket.emit('countUpdated', count)
+  console.log('New Websocket connection')
+  socket.emit('message', 'welcome!')
+  socket.broadcast.emit('sendMessage', 'A new user has joined the chat')
+
+  socket.on('sendMessage', (msg) => {
+    io.emit('sendMessage', msg)
+  })
+
+  socket.on('disconnect', () => {
+    io.emit('sendMessage', 'A user has disconnected')
   })
 })
 
