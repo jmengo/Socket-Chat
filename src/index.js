@@ -17,12 +17,14 @@ io.on('connection', (socket) => {
   socket.emit('message', 'welcome!')
   socket.broadcast.emit('sendMessage', 'A new user has joined the chat')
 
-  socket.on('sendMessage', (msg) => {
+  socket.on('sendMessage', (msg, callback) => {
     io.emit('sendMessage', msg)
+    callback()
   })
 
-  socket.on('shareLocation', (lat, lon) => {
+  socket.on('shareLocation', (lat, lon, callback) => {
     io.emit('sendMessage', `https://google.com/maps?q=${lat},${lon}`)
+    callback()
   })
 
   socket.on('disconnect', () => {
