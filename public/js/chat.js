@@ -4,11 +4,25 @@ const socket = io()
 const $messageForm = document.getElementById("messageForm")
 const $messageFormInput = $messageForm.elements.message
 const $messageFormButton = $messageForm.querySelector("button")
-
+const $messages = document.getElementById("messages")
 const $shareLocationButton = document.getElementById("shareLocation")
 
-socket.on('sendMessage', (msg) => {
-  console.log(msg)
+// Templates
+const $messageTemplate = document.getElementById("messageTemplate")
+const $locationTemplate = document.getElementById("locationTemplate")
+
+socket.on('sendMessage', (message) => {
+  const html = Mustache.render($messageTemplate.innerHTML, {
+    message
+  })
+  $messages.insertAdjacentHTML('beforeend', html)
+})
+
+socket.on('sendLocationMessage', (message) => {
+  const html = Mustache.render($locationTemplate.innerHTML, {
+    message
+  })
+  $messages.insertAdjacentHTML('beforeend', html)
 })
 
 // Live Messaging

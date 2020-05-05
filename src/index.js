@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('shareLocation', (lat, lon, callback) => {
-    io.emit('sendMessage', `https://google.com/maps?q=${lat},${lon}`)
+    io.emit('sendLocationMessage', `https://google.com/maps?q=${lat},${lon}`)
     callback()
   })
 
