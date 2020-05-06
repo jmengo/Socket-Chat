@@ -1,6 +1,7 @@
 const express = require('express')
 const http = require('http')
 const socketIO = require('socket.io')
+const path = require('path')
 const {
   generateMessage,
   generateLocationMessage
@@ -21,10 +22,10 @@ const server = http.createServer(app)
 const io = socketIO(server)
 const port = process.env.port || 3000
 
+const publicPath = path.join(__dirname, '../public')
 
 // Serve Static Files
-app.use(express.json())
-app.use(express.static('public'))
+app.use(express.static(publicPath))
 
 io.on('connection', (socket) => {
   console.log('New Websocket connection')
