@@ -20,6 +20,29 @@ const {
   ignoreQueryPrefix: true
 })
 
+const autoScroll = () => {
+  // Find newest element
+  const $newMessage = $messages.lastElementChild
+
+  // Check height of new message
+  const newMessageStyles = getComputedStyle($newMessage)
+  const newMessageVertMargin = parseInt(newMessageStyles.marginBottom) + parseInt(newMessageStyles.marginTop)
+  const newMessageHeight = $newMessage.offsetHeight + newMessageVertMargin
+
+  // Check visible height of new message
+  const visibleHeight = $messages.offsetHeight
+
+  // Height of messages container
+  const containerHeight = $messages.scrollHeight
+
+  // Find current scroll offset
+  const scrollOffset = $messages.scrollTop + visibleHeight
+
+  if (containerHeight - newMessageHeight <= scrollOffset) {
+    $messages.scrollTop = $messages.scrollHeight
+  }
+}
+
 socket.on('sendMessage', (message, username) => {
   const html = Mustache.render($messageTemplate.innerHTML, {
     message: message.text,
@@ -27,6 +50,7 @@ socket.on('sendMessage', (message, username) => {
     username: username || 'Admin'
   })
   $messages.insertAdjacentHTML('beforeend', html)
+  autoScroll()
 })
 
 socket.on('sendLocationMessage', (message, username) => {
@@ -36,6 +60,7 @@ socket.on('sendLocationMessage', (message, username) => {
     username: username || 'Admin'
   })
   $messages.insertAdjacentHTML('beforeend', html)
+  autoScroll()
 })
 
 socket.on('updateRoom', ({
