@@ -19,11 +19,17 @@ app.use(express.static('public'))
 
 io.on('connection', (socket) => {
   console.log('New Websocket connection')
-  socket.emit('sendMessage', generateMessage('Welcome!'))
-  socket.broadcast.emit('sendMessage', 'A new user has joined the chat')
+  socket.on('join', ({
+    username,
+    room
+  }) => {
+    socket.join(room)
+    socket.emit('sendMessage', generateMessage('Welcome!'))
+    socket.broadcast.to(room).emit('sendMessage', generateMessage(`${username} has joined the room!`))
+  })
 
   socket.on('sendMessage', (msg, callback) => {
-    io.emit('sendMessage', generateMessage(msg))
+    io.to('Test').emit('sendMessage', generateMessage(msg))
     callback()
   })
 
