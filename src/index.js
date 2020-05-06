@@ -40,6 +40,15 @@ io.on('connection', (socket) => {
     socket.join(user.room)
     socket.emit('sendMessage', generateMessage('Welcome!'))
     socket.broadcast.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has joined the room!`, capitalizeFirstLetter(user.username)))
+    let users = getUsersInRoom(user.room)
+    users.forEach((user) => {
+      user.username = capitalizeFirstLetter(user.username)
+    })
+    console.log(users)
+    io.to(user.room).emit('updateRoom', {
+      room: user.room,
+      users
+    })
     callback()
   })
 
@@ -62,6 +71,14 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = removeUser(socket.id)
     if (user) {
+      let users = getUsersInRoom(user.room)
+      users.forEach((user) => {
+        user.username = capitalizeFirstLetter(user.username)
+      })
+      io.to(user.room).emit('updateRoom', {
+        room: user.room,
+        users
+      })
       io.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has left the room`), capitalizeFirstLetter(user.username))
     }
   })

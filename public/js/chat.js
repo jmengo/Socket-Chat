@@ -10,6 +10,7 @@ const $shareLocationButton = document.getElementById("shareLocation")
 // Templates
 const $messageTemplate = document.getElementById("messageTemplate")
 const $locationTemplate = document.getElementById("locationTemplate")
+const $sidebarTemplate = document.getElementById("sidebarTemplate")
 
 // Options
 const {
@@ -35,6 +36,17 @@ socket.on('sendLocationMessage', (message, username) => {
     username: username || 'Admin'
   })
   $messages.insertAdjacentHTML('beforeend', html)
+})
+
+socket.on('updateRoom', ({
+  room,
+  users
+}) => {
+  const html = Mustache.render($sidebarTemplate.innerHTML, {
+    room,
+    users
+  })
+  document.getElementById("sidebar").innerHTML = html
 })
 
 // Live Messaging
