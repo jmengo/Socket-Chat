@@ -1,6 +1,10 @@
 const express = require('express')
 const http = require('http')
 const socketIO = require('socket.io')
+const {
+  generateMessage,
+  generateLocationMessage
+} = require('./utils/messages')
 
 // Server Config
 const app = express()
@@ -8,13 +12,14 @@ const server = http.createServer(app)
 const io = socketIO(server)
 const port = 3000
 
+
 // Serve Static Files
 app.use(express.json())
 app.use(express.static('public'))
 
 io.on('connection', (socket) => {
   console.log('New Websocket connection')
-  socket.emit('message', 'welcome!')
+  socket.emit('sendMessage', generateMessage('Welcome!'))
   socket.broadcast.emit('sendMessage', 'A new user has joined the chat')
 
   socket.on('sendMessage', (msg, callback) => {
@@ -23,12 +28,12 @@ io.on('connection', (socket) => {
   })
 
   socket.on('shareLocation', (lat, lon, callback) => {
-    io.emit('sendLocationMessage', `https://google.com/maps?q=${lat},${lon}`)
+    io.emit('sendLocationMessage', generateLocationMessage(lat, lon))
     callback()
   })
 
   socket.on('disconnect', () => {
-    io.emit('sendMessage', 'A user has disconnected')
+    io.emit('sendMessage', generateMessage('A user has disconnected'))
   })
 })
 

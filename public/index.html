@@ -22,12 +22,13 @@
   <button id="shareLocation">Share Location</button>
   <script id="messageTemplate" type="text/html">
     <div>
-      <p>{{message}} </p>
+      <p>{{createdAt}} - {{message}} </p>
     </div>
   </script>
   <script id="locationTemplate" type="text/html">
     <div>
-      <a href={{message}} target="_blank">View my location</a>
+      <span>{{createdAt}} - </span>
+      <a href={{link}} target="_blank">View my location</a>
     </div>
   </script>
 </body>
