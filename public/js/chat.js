@@ -81,4 +81,10 @@ document.getElementById('shareLocation').addEventListener('click', () => {
 socket.emit('join', {
   username,
   room
+}, (error) => {
+  if (error) {
+    console.log(error)
+  } else {
+    console.log('Succesfully joined the room')
+  }
 })

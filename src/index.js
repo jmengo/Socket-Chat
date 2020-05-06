@@ -5,6 +5,15 @@ const {
   generateMessage,
   generateLocationMessage
 } = require('./utils/messages')
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom
+} = require('./utils/users')
+const {
+  capitalizeFirstLetter
+} = require('./utils/misc')
 
 // Server Config
 const app = express()
@@ -19,27 +28,42 @@ app.use(express.static('public'))
 
 io.on('connection', (socket) => {
   console.log('New Websocket connection')
-  socket.on('join', ({
-    username,
-    room
-  }) => {
-    socket.join(room)
+  socket.on('join', (options, callback) => {
+    const {
+      error,
+      user
+    } = addUser({
+      id: socket.id,
+      ...options
+    })
+    if (error) return callback(error)
+    socket.join(user.room)
     socket.emit('sendMessage', generateMessage('Welcome!'))
-    socket.broadcast.to(room).emit('sendMessage', generateMessage(`${username} has joined the room!`))
+    socket.broadcast.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has joined the room!`))
+    callback()
   })
 
   socket.on('sendMessage', (msg, callback) => {
-    io.to('Test').emit('sendMessage', generateMessage(msg))
-    callback()
+    const user = getUser(socket.id)
+    if (user) {
+      io.to(user.room).emit('sendMessage', generateMessage(msg))
+      callback()
+    }
   })
 
   socket.on('shareLocation', (lat, lon, callback) => {
-    io.emit('sendLocationMessage', generateLocationMessage(lat, lon))
-    callback()
+    const user = getUser(socket.id)
+    if (user) {
+      io.to(user.room).emit('sendLocationMessage', generateLocationMessage(lat, lon))
+      callback()
+    }
   })
 
   socket.on('disconnect', () => {
-    io.emit('sendMessage', generateMessage('A user has disconnected'))
+    const user = removeUser(socket.id)
+    if (user) {
+      io.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has left the room`))
+    }
   })
 })
 
