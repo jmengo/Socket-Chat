@@ -19,18 +19,20 @@ const {
   ignoreQueryPrefix: true
 })
 
-socket.on('sendMessage', (message) => {
+socket.on('sendMessage', (message, username) => {
   const html = Mustache.render($messageTemplate.innerHTML, {
     message: message.text,
-    createdAt: moment(message.createdAt).format('h:mm A')
+    createdAt: moment(message.createdAt).format('h:mm A'),
+    username: username || 'Admin'
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })
 
-socket.on('sendLocationMessage', (message) => {
+socket.on('sendLocationMessage', (message, username) => {
   const html = Mustache.render($locationTemplate.innerHTML, {
     link: message.link,
-    createdAt: moment(message.createdAt).format('h:mm A')
+    createdAt: moment(message.createdAt).format('h:mm A'),
+    username: username || 'Admin'
   })
   $messages.insertAdjacentHTML('beforeend', html)
 })

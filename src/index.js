@@ -39,14 +39,14 @@ io.on('connection', (socket) => {
     if (error) return callback(error)
     socket.join(user.room)
     socket.emit('sendMessage', generateMessage('Welcome!'))
-    socket.broadcast.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has joined the room!`))
+    socket.broadcast.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has joined the room!`, capitalizeFirstLetter(user.username)))
     callback()
   })
 
   socket.on('sendMessage', (msg, callback) => {
     const user = getUser(socket.id)
     if (user) {
-      io.to(user.room).emit('sendMessage', generateMessage(msg))
+      io.to(user.room).emit('sendMessage', generateMessage(msg), capitalizeFirstLetter(user.username))
       callback()
     }
   })
@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
   socket.on('shareLocation', (lat, lon, callback) => {
     const user = getUser(socket.id)
     if (user) {
-      io.to(user.room).emit('sendLocationMessage', generateLocationMessage(lat, lon))
+      io.to(user.room).emit('sendLocationMessage', generateLocationMessage(lat, lon), capitalizeFirstLetter(user.username))
       callback()
     }
   })
@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const user = removeUser(socket.id)
     if (user) {
-      io.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has left the room`))
+      io.to(user.room).emit('sendMessage', generateMessage(`${capitalizeFirstLetter(user.username)} has left the room`), capitalizeFirstLetter(user.username))
     }
   })
 })
