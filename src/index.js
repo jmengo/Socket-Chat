@@ -20,7 +20,7 @@ const {
 const app = express()
 const server = http.createServer(app)
 const io = socketIO(server)
-const port = process.env.port || 3000
+const port = process.env.PORT || 3000
 
 const publicPath = path.join(__dirname, '../public')
 
@@ -86,5 +86,5 @@ io.on('connection', (socket) => {
 })
 
 server.listen(port, () => {
-  console.log('App is up on port 3000')
+  console.log(`App is up on port ${port}`)
 })
