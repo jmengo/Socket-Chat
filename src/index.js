@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
   socket.broadcast.emit('sendMessage', 'A new user has joined the chat')
 
   socket.on('sendMessage', (msg, callback) => {
-    io.emit('sendMessage', msg)
+    io.emit('sendMessage', generateMessage(msg))
     callback()
   })
 

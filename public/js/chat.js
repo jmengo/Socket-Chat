@@ -30,12 +30,13 @@ socket.on('sendLocationMessage', (message) => {
 // Live Messaging
 $messageForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  // disable form until previous message has been sent
-  $messageFormButton.setAttribute('disabled', 'disabled')
-
   text = e.target.elements.message.value
+  if (!text) {
+    return console.log("Can\'t send an empty message!")
+  } else {
+    $messageFormButton.setAttribute('disabled', 'disabled')
+  }
   socket.emit('sendMessage', text, (error) => {
-    // Enable form
     $messageFormButton.removeAttribute('disabled')
     $messageFormInput.value = ''
     $messageFormInput.focus()
