@@ -7,3 +7,6 @@ Features
 - Sockets
 - Socket Rooms
 - Location Sharing
+
+
+![](./Demo/socketChat_Demo.gif)
